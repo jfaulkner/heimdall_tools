@@ -134,6 +134,18 @@ module HeimdallTools
       puts options[:output].to_s
     end
 
+    desc 'gitlab_sast_mapper', 'gitlab_sast_mapper translates Gitlab SAST results JSON to HDF format JSON be viewed on Heimdall'
+    long_desc Help.text(:gitlab_sast_mapper)
+    option :json, required: true, aliases: '-j'
+    option :output, required: true, aliases: '-o'
+    option :verbose, type: :boolean, aliases: '-V'
+    def gitlab_sast_mapper
+      hdf = HeimdallTools::GitlabSastMapper.new(File.read(options[:json])).to_hdf
+      File.write(options[:output], hdf)
+      puts "\r\HDF Generated:\n"
+      puts options[:output].to_s
+    end
+
     desc 'version', 'prints version'
     def version
       puts VERSION

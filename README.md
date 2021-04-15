@@ -16,6 +16,7 @@ HeimdallTools supplies several methods to convert output from various tools to "
 - **dbprotect_mapper** - database vulnerability scanner
 - **aws_config_mapper** - assess, audit, and evaluate AWS resources
 - **netsparker_mapper** - web application security scanner
+- **gitlab_sast_mapper** - Gitlab - static application security tool
 
 Ruby 2.4 or higher (check using "ruby -v")
 
@@ -277,7 +278,7 @@ USAGE: heimdall_tools version
 
 ### Overview of our PR process
 
-1. open an issue on the main inspec_tools website noting the issues your PR will address
+1. open an issue on the main heimdall_tools website noting the issues your PR will address
 2. fork the repo
 3. checkout your repo
 4. cd to the repo
@@ -290,11 +291,11 @@ USAGE: heimdall_tools version
 11. update the CLI as needed and add in `usage` example
 12. (if needed) create and document any example or templates
 13. (if needed) create any supporing scripts
-14. (opt) gem build inspec_tools.gemspec
-15. (opt) gem install inspec_tools
+14. (opt) gem build heimdall_tools.gemspec
+15. (opt) gem install heimdall_tools
 16. (opt) test via the installed gem
 17. git commit -a -s `<your_branch>`
-18. Open a PRs aginst the MITRE inspec_tools repo
+18. Open a PRs aginst the MITRE heimdall_tools repo
 
 # Publishing a Release
 

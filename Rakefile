@@ -15,6 +15,7 @@ namespace :test do
     t.libs << "lib"
     t.test_files = Dir.glob([
       'test/unit/heimdall_tools/zap_mapper_test.rb',
+      'test/unit/heimdall_tools/gitlab_sast_mapper_test.rb'
     ])
   end
 end

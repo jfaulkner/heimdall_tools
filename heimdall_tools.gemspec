@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   end
   spec.authors       = ['Robert Thew', 'Rony Xavier', 'Aaron Lippold']
   spec.email         = ['rxavier@mitre.org']
-  spec.summary       = 'Convert Forify, Openzap and Sonarqube results to HDF'
+  spec.summary       = 'Convert Forify, Openzap, Sonarqube and Gitlab SAST results to HDF'
   spec.description   = 'Converter utils that can be included as a gem or used from the command line'
   spec.homepage      = 'https://github.com/mitre/heimdall_tools'
   spec.license       = 'Apache-2.0'
