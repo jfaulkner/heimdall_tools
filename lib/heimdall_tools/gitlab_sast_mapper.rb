@@ -8,12 +8,12 @@ CWE_NIST_MAPPING_FILE = File.join(RESOURCE_DIR, 'cwe-nist-mapping.csv')
 
 # set impact/severity mapping
 IMPACT_MAPPING = {
-  Info: 0.0,
-  Unknown: 0.1,
-  Low: 0.3,
-  Medium: 0.5,
-  High: 0.7,
-  Critical: 0.9
+  info: 0.0,
+  unknown: 0.1,
+  low: 0.3,
+  medium: 0.5,
+  high: 0.7,
+  critical: 0.9
 }.freeze
 
 DEFAULT_NIST_TAG = %w{SA-11 RA-5}.freeze
@@ -50,14 +50,14 @@ module HeimdallTools
       finding['status'] = 'failed'
       finding['code_desc'] = []
       finding['code_desc'] << "id : #{vulnerability['id']}"
-      finding['code_desc'] << "category : #{vulnerability['category']}"
+      #finding['code_desc'] << "category : #{vulnerability['category']}"
       #finding['code_desc'] << "fixed_versions : #{vulnerability['component_versions']['fixed_versions']}"
       #finding['code_desc'] << "issue_type : #{vulnerability['issue_type']}"
       #finding['code_desc'] << "issue_type : #{vulnerability['issue_type']}"
       finding['code_desc'] << "location : #{vulnerability['location']['file']} : lines #{vulnerability['location']['start_line']}-#{vulnerability['location']['end_line']}"
       finding['code_desc'] = finding['code_desc'].join("\n")
       finding['run_time'] = NA_FLOAT
-      finding['start_time'] = vulnerability['start_time']
+      finding['start_time'] = vulnerability['start_time'] || ""
       [finding]
     end
 
@@ -121,27 +121,25 @@ module HeimdallTools
 
         vulnerability_count +=1
         item = {}
-        item['tags']               = {}
-        item['descriptions']       = []
-        item['refs']               = NA_ARRAY
-
         item['id']                 = OpenSSL::Digest::MD5.digest(vulnerability['name'].to_s).unpack1('H*').to_s
         item['title']              = vulnerability['name'].to_s
         item['desc']               = vulnerability['description']
         item['impact']             = impact(vulnerability['severity'].to_s)
-        item['source_location']    = "vulnerability['location']['file']} : lines #{vulnerability['location']['start_line']}-#{vulnerability['location']['end_line']}"
-        #item['code']               = vulnerability['location']
+        item['source_location']    = "" #"#{vulnerability['location']['file']} : lines #{vulnerability['location']['start_line']}-#{vulnerability['location']['end_line']}"
+        item['code']               = ""
         item['results']            = finding(vulnerability)
 
+        item['tags']               = {}
         # populate identifiers - cve, cwe, osvdb, usn or analyzer-dependent type (gemnasium or eslint)
         # may contain multiple identifiers for same type - process by type and parse all appropriate entries
-        types = vulnerability["identifiers"].map {|id| id["type"]}.uniq
-        puts "types: #{types}"
-
-        # populate combined entry for each unique type
         vulnerability["identifiers"].map {|id| id["type"]}.uniq.each do |type|
-          # cve = [330, 331, ...]
-          item['tags'][type] = vulnerability["identifiers"].select {|id| id["type"]==type}
+          # populate combined entry for each unique type
+          vulnerability["identifiers"].select {|id| 
+            if id["type"]==type
+              # map appropriately from NIST mappings
+              item['tags'][type].nil?  ? item['tags'][type] = [id["name"]] : item['tags'][type] << id["name"]
+            end
+          }
         end
 
         controls << item
@@ -149,8 +147,8 @@ module HeimdallTools
 
       controls = collapse_duplicates(controls)
       results = HeimdallDataFormat.new(profile_name: 'Gitlab SAST Scan',
-                                       version: NA_STRING,
-                                       title: 'Gitlab SAST Scan',
+                                       version: @sastresults['version'],
+                                       title: "Gitlab SAST Scan - #{@sastresults['scan']['scanner']['name']} #{@sastresults['scan']['scanner']['version']}",
                                        summary: 'Continuous Security and Universal Artifact Analysis',
                                        controls: controls)
       results.to_hdf
